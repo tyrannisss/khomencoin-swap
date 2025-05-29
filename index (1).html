@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KhomenCoin - swaps</title>
+<style>
+  body {
+    background-color: #222;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+
+  /* Название сайта сверху */
+  h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2em;
+    color: #ffcc00;
+    letter-spacing: 2px;
+  }
+  
+  /* Контейнер для выбора сети */
+  #network-selector-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+  }
+
+  /* Стиль для выпадающего списка выбора блокчейна */
+  #networkSelect {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #222;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  #networkSelect:focus {
+    outline: none;
+    box-shadow: 0 0 8px #ffcc00;
+  }
+
+  /* Блок для подключения кошелька */
+  #wallet-container {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  #connectWalletBtn {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 6px;
+    background-color: #ffcc00;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  #connectWalletBtn:hover {
+    background-color: #e6b800;
+  }
+  #walletStatus {
+    margin-top: 10px;
+    font-size: 0.9em;
+  }
+
+  #meme-coins-exchange {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Общий стиль для формы */
+  #meme-coins-exchange form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  label {
+    font-weight: bold;
+    color: #ffcc00;
+  }
+
+  select, input[type=number] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    background-color: #222;
+    color: #fff;
+    font-size: 1em;
+    transition: all 0.3s;
+  }
+
+  select:focus, input:focus {
+    outline: none;
+    box-shadow: 0 0 8px #ffcc00;
+  }
+
+  /* Кнопки */
+  .btn-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+  }
+
+  button {
+    flex: 1 1 45%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  #swapBtn {
+    background-color: #ffcc00;
+    color: #222;
+    font-weight: bold;
+  }
+  #swapBtn:hover {
+    background-color: #e6b800;
+  }
+
+  #exchangeBtn {
+    background-color: #00cc66;
+    color: #fff;
+    font-weight: bold;
+  }
+  #exchangeBtn:hover {
+    background-color: #009955;
+  }
+
+  /* Остальные стили без изменений */
+  #coins-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .coin-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #444;
+    padding: 10px;
+    border-radius: 8px;
+    width: 150px;
+    min-width: 120px;
+    transition: background 0.3s;
+  }
+
+  .coin-info:hover {
+    background: #555;
+  }
+
+  .coin-info img {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  #results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+    gap: 15px;
+  }
+
+  .result-box {
+    background: #444;
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 150px;
+    flex: 1 1 45%;
+    max-width: 200px;
+    text-align: center;
+  }
+
+  .result-box h4 {
+    margin-top: 0;
+    color: #ffcc00;
+  }
+
+  #meme-exchange-result {
+    margin-top: 20px;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ffff00;
+    text-align: center;
+    padding: 10px;
+    background: #333;
+    border-radius: 8px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media(max-width: 600px){
+    #meme-coins-exchange {
+      padding: 10px;
+    }
+    .btn-container {
+      flex-direction: column;
+    }
+    button {
+      flex: 1 1 100%;
+    }
+    #results {
+      flex-direction: column;
+    }
+    .result-box {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h2>KhomenCoin - swaps</h2>
+
+<!-- Выбор блокчейна -->
+<div id="network-selector-container">
+  <label for="networkSelect" style="color:#ffcc00;">Выберите сеть:</label>
+  <select id="networkSelect">
+    <option value="ethereum">Ethereum</option>
+    <option value="bsc">Binance Smart Chain</option>
+    <option value="polygon">Polygon</option>
+  </select>
+</div>
+
+<!-- Блок подключения кошелька -->
+<div id="wallet-container">
+  <button id="connectWalletBtn">🔗 Подключить кошелек</button>
+  <p id="walletStatus">Кошелек не подключен</p>
+</div>
+
+<!-- Остальной интерфейс -->
+<div id="meme-coins-exchange">
+  <form id="exchangeForm" onsubmit="return false;">
+    <label for="memeFrom">Обменять (От):</label>
+    <select id="memeFrom"></select>
+
+    <label for="memeTo">На (Кому):</label>
+    <select id="memeTo"></select>
+
+    <label for="memeAmount">Количество:</label>
+    <input type="number" id="memeAmount" min="0" step="any" placeholder="Введите количество" />
+
+    <div class="btn-container">
+      <button type="button" id="swapBtn">🔄 Обменять местами</button>
+      <!-- Замененная кнопка -->
+      <button type="button" id="exchangeBtn">Обмен монет</button>
+    </div>
+  </form>
+
+  <div id="coins-container">
+    <div class="coin-info" id="fromCoinInfo">
+      <img id="fromCoinImg" src="" alt="От" />
+      <span id="fromCoinName"></span>
+      <div id="fromCoinRate" style="color:#ccc; font-size:0.9em;"></div>
+    </div>
+    <div class="coin-info" id="toCoinInfo">
+      <img id="toCoinImg" src="" alt="Кому" />
+      <span id="toCoinName"></span>
+      <div id="toCoinRate" style="color:#ccc; font-size:0.9em;"></div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="result-box">
+      <h4>Отправлено</h4>
+      <div id="amountSent">0</div>
+    </div>
+    <div class="result-box">
+      <h4>Получено</h4>
+      <div id="amountReceived">0</div>
+    </div>
+  </div>
+
+  <div id="meme-exchange-result">
+    Результат: <span id="memeExchangeOutput">0</span>
+  </div>
+</div>
+
+<script>
+(async () => {
+  // --- ВАШИ ДАННЫЕ И ФУНКЦИИ ---
+  const memeCoins = {
+    khomen: { 
+      name: 'KhomenCoin', 
+      img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/KhomenCoin.png',
+      rate: { khomen: 1, shiba: 50, safemoon: 0.2, doge_new: 0.1, pepe: 10, sponge: 0.05, moon: 0.03, pepe_2: 15, dankmemes: 0.02, cheems: 5, navi: 0.5, cute: 0.1, pepemoon: 0.02, catgirl: 0.4, meme: 0.3, doge2: 0.2, memex: 0.15, mooncat: 0.07, pandas: 0.2, banana: 2 }
+    },
+    shiba: { name: 'Shiba Inu', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Shiba%20Inu.png', rate: { khomen: 0.02, shiba: 1, safemoon: 0.004, doge_new: 0.002, pepe: 0.2, sponge: 0.001, moon: 0.0006, pepe_2: 0.3, dankmemes: 0.0004, cheems: 0.1, navi: 0.01, cute: 0.002, pepemoon: 0.0004, catgirl: 0.008, meme: 0.006, doge2: 0.004, memex: 0.003, mooncat: 0.0014, pandas: 0.004, banana: 0.04 } },
+    safemoon: { name: 'SafeMoon', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/SafeMoon.png', rate: { khomen: 5, shiba: 250, safemoon: 1, doge_new: 0.5, pepe: 20, sponge: 0.1, moon: 0.06, pepe_2: 30, dankmemes: 0.04, cheems: 10, navi: 1, cute: 0.2, pepemoon: 0.04, catgirl: 0.8, meme: 0.6, doge2: 0.4, memex: 0.3, mooncat: 0.14, pandas: 0.4, banana: 4 } },
+    doge_new: { name: 'DogeCoin New', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/DogeCoin%20New.png', rate: { khomen: 10, shiba: 500, safemoon: 2, doge_new: 1, pepe: 50, sponge: 0.2, moon: 0.12, pepe_2: 60, dankmemes: 0.08, cheems: 20, navi: 2, cute: 0.4, pepemoon: 0.08, catgirl: 1.6, meme: 1.2, doge2: 0.8, memex: 0.6, mooncat: 0.28, pandas: 0.8, banana: 8 } },
+    pepe: { name: 'PepeCoin', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/PepeCoin.png', rate: { khomen: 0.1, shiba: 5, safemoon: 0.05, doge_new: 0.02, pepe: 1, sponge: 0.005, moon: 0.003, pepe_2: 1.5, dankmemes: 0.001, cheems: 0.3, navi: 0.03, cute: 0.005, pepemoon: 0.001, catgirl: 0.02, meme: 0.015, doge2: 0.01, memex: 0.007, mooncat: 0.003, pandas: 0.008, banana: 0.08 } },
+    sponge: { name: 'SpongeBobCoin', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/SpongeBobCoin.png', rate: { khomen: 20, shiba: 1000, safemoon: 5, doge_new: 2, pepe: 100, sponge: 1, moon: 0.6, pepe_2: 120, dankmemes: 0.8, cheems: 30, navi: 3, cute: 0.6, pepemoon: 0.12, catgirl: 2.4, meme: 1.8, doge2: 1.2, memex: 0.9, mooncat: 0.42, pandas: 1.2, banana: 12 } },
+    moon: { name: 'MoonCoin', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/MoonCoin.png', rate: { khomen: 33, shiba: 1667, safemoon: 8, doge_new: 4, pepe: 20, sponge: 1.67, moon: 1, pepe_2: 25, dankmemes: 1.33, cheems: 40, navi: 4, cute: 0.8, pepemoon: 0.16, catgirl: 3.2, meme: 2.4, doge2: 1.6, memex: 1.2, mooncat: 0.56, pandas: 1.6, banana: 16 } },
+    pepe_2: { name: 'PepeCoin 2', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/PepeCoin%202.png', rate: { khomen: 0.07, shiba: 3.3, safemoon: 0.033, doge_new: 0.016, pepe: 0.67, sponge: 0.005, moon: 0.04, pepe_2: 1, dankmemes: 0.0008, cheems: 0.2, navi: 0.02, cute: 0.003, pepemoon: 0.0006, catgirl: 0.012, meme: 0.009, doge2: 0.006, memex: 0.004, mooncat: 0.002, pandas: 0.006, banana: 0.06 } },
+    dankmemes: { name: 'DankMemes', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/DankMemes.png', rate: { khomen: 50, shiba: 2500, safemoon: 12, doge_new: 6, pepe: 50, sponge: 2.5, moon: 1.5, pepe_2: 62, dankmemes: 1, cheems: 60, navi: 6, cute: 1.2, pepemoon: 0.24, catgirl: 4.8, meme: 3.6, doge2: 2.4, memex: 1.8, mooncat: 0.84, pandas: 2.4, banana: 24 } },
+    cheems: { name: 'Cheems', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Cheems.png', rate: { khomen: 0.2, shiba: 10, safemoon: 0.05, doge_new: 0.025, pepe: 2, sponge: 0.01, moon: 0.006, pepe_2: 0.3, dankmemes: 0.016, cheems: 1, navi: 0.1, cute: 0.02, pepemoon: 0.004, catgirl: 0.08, meme: 0.06, doge2: 0.04, memex: 0.03, mooncat: 0.014, pandas: 0.04, banana: 0.4 } },
+    navi: { name: 'Navi', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Navi.png', rate: { khomen: 2, shiba: 100, safemoon: 0.5, doge_new: 0.25, pepe: 20, sponge: 0.5, moon: 0.3, pepe_2: 3, dankmemes: 0.4, cheems: 1, navi: 1, cute: 0.2, pepemoon: 0.04, catgirl: 0.8, meme: 0.6, doge2: 0.4, memex: 0.3, mooncat: 0.14, pandas: 0.4, banana: 4 } },
+    cute: { name: 'Cute', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Cute.png', rate: { khomen: 10, shiba: 500, safemoon: 2, doge_new: 1, pepe: 10, sponge: 0.2, moon: 0.12, pepe_2: 12, dankmemes: 0.16, cheems: 4, navi: 0.4, cute: 1, pepemoon: 0.2, catgirl: 4, meme: 3, doge2: 2, memex: 1.5, mooncat: 0.7, pandas: 2, banana: 20 } },
+    pepemoon: { name: 'PepeMoon', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/PepeMoon.png', rate: { khomen: 50, shiba: 2500, safemoon: 12, doge_new: 6, pepe: 50, sponge: 2.5, moon: 1.5, pepe_2: 62, dankmemes: 1, cheems: 60, navi: 6, cute: 1.2, pepemoon: 1, catgirl: 4.8, meme: 3.6, doge2: 2.4, memex: 1.8, mooncat: 0.84, pandas: 2.4, banana: 24 } },
+    catgirl: { name: 'CatGirl', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/CatGirl.png', rate: { khomen: 2.5, shiba: 125, safemoon: 0.5, doge_new: 0.25, pepe: 20, sponge: 0.5, moon: 0.3, pepe_2: 3, dankmemes: 0.4, cheems: 1, navi: 0.2, cute: 0.5, pepemoon: 0.1, catgirl: 1, meme: 0.75, doge2: 0.5, memex: 0.4, mooncat: 0.2, pandas: 0.6, banana: 6 } },
+    meme: { name: 'Meme', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Meme.png', rate: { khomen: 3, shiba: 150, safemoon: 0.6, doge_new: 0.3, pepe: 15, sponge: 0.07, moon: 0.04, pepe_2: 0.75, dankmemes: 0.02, cheems: 0.5, navi: 0.05, cute: 0.01, pepemoon: 0.002, catgirl: 0.04, meme: 1, doge2: 0.7, memex: 0.5, mooncat: 0.23, pandas: 0.7, banana: 7 } },
+    doge2: { name: 'Doge2', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Doge2.png', rate: { khomen: 5, shiba: 250, safemoon: 1.2, doge_new: 0.6, pepe: 25, sponge: 0.12, moon: 0.07, pepe_2: 1.25, dankmemes: 0.03, cheems: 0.8, navi: 0.08, cute: 0.02, pepemoon: 0.004, catgirl: 0.08, meme: 0.7, doge2: 1, memex: 0.75, mooncat: 0.35, pandas: 1, banana: 10 } },
+    memex: { name: 'MemeX', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/MemeX.png', rate: { khomen: 6, shiba: 300, safemoon: 1.4, doge_new: 0.7, pepe: 30, sponge: 0.14, moon: 0.08, pepe_2: 1.5, dankmemes: 0.04, cheems: 1, navi: 0.1, cute: 0.02, pepemoon: 0.004, catgirl: 0.08, meme: 1.2, doge2: 0.9, mooncat: 0.45, pandas: 1.2, banana: 12 } },
+    mooncat: { name: 'MoonCat', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/MoonCat.png', rate: { khomen: 14, shiba: 700, safemoon: 3.4, doge_new: 1.7, pepe: 70, sponge: 0.33, moon: 0.2, pepe_2: 3.4, dankmemes: 0.02, cheems: 0.8, navi: 0.08, cute: 0.016, pepemoon: 0.003, catgirl: 0.6, meme: 0.45, doge2: 0.3, memex: 0.22, mooncat: 1, pandas: 0.3, banana: 3 } },
+    pandas: { name: 'Pandas', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Pandas.png', rate: { khomen: 5, shiba: 250, safemoon: 1.2, doge_new: 0.6, pepe: 30, sponge: 0.14, moon: 0.08, pepe_2: 1.5, dankmemes: 0.02, cheems: 0.8, navi: 0.08, cute: 0.016, pepemoon: 0.003, catgirl: 0.6, meme: 0.45, doge2: 0.3, memex: 0.22, mooncat: 1, pandas: 1, banana: 10 } },
+    banana: { name: 'Banana', img: 'https://assets.onecompiler.app/43k43hanu/43k3qm5nk/Banana.png', rate: { khomen: 0.5, shiba: 25, safemoon: 0.1, doge_new: 0.05, pepe: 5, sponge: 0.02, moon: 0.012, pepe_2: 0.25, dankmemes: 0.001, cheems: 0.2, navi: 0.02, cute: 0.004, pepemoon: 0.0008, catgirl: 0.016, meme: 0.012, doge2: 0.008, memex: 0.006, mooncat: 0.003, pandas: 0.008, banana: 1 } }
+  };
+
+  const fromSelect = document.getElementById('memeFrom');
+  const toSelect = document.getElementById('memeTo');
+
+  for (const key in memeCoins) {
+    const option1 = document.createElement('option');
+    option1.value = key;
+    option1.textContent = memeCoins[key].name;
+    fromSelect.appendChild(option1);
+    const option2 = document.createElement('option');
+    option2.value = key;
+    option2.textContent = memeCoins[key].name;
+    toSelect.appendChild(option2);
+  }
+
+  const fromCoinName = document.getElementById('fromCoinName');
+  const fromCoinImg = document.getElementById('fromCoinImg');
+  const fromCoinRateDiv = document.getElementById('fromCoinRate');
+
+  const toCoinName = document.getElementById('toCoinName');
+  const toCoinImg = document.getElementById('toCoinImg');
+  const toCoinRateDiv = document.getElementById('toCoinRate');
+
+  const amountSentDiv = document.getElementById('amountSent');
+  const amountReceivedDiv = document.getElementById('amountReceived');
+  const outputSpan = document.getElementById('memeExchangeOutput');
+
+  function updateSelectedCoins() {
+    const fromKey = fromSelect.value;
+    const toKey = toSelect.value;
+    const rate = memeCoins[fromKey].rate[toKey];
+
+    if (!rate) {
+      fromCoinRateDiv.textContent = 'Курс не найден';
+      toCoinRateDiv.textContent = '';
+      return;
+    }
+    fromCoinImg.src = memeCoins[fromKey].img;
+    fromCoinName.textContent = memeCoins[fromKey].name;
+    toCoinImg.src = memeCoins[toKey].img;
+    toCoinName.textContent = memeCoins[toKey].name;
+    fromCoinRateDiv.textContent = `1 ${memeCoins[fromKey].name} = ${rate.toFixed(4)} ${memeCoins[toKey].name}`;
+    toCoinRateDiv.textContent = `1 ${memeCoins[toKey].name} ≈ ${(1/rate).toFixed(4)} ${memeCoins[fromKey].name}`;
+  }
+
+  fromSelect.addEventListener('change', updateSelectedCoins);
+  toSelect.addEventListener('change', updateSelectedCoins);
+
+  document.getElementById('swapBtn').addEventListener('click', () => {
+    const temp = fromSelect.value;
+    fromSelect.value = toSelect.value;
+    toSelect.value = temp;
+    updateSelectedCoins();
+  });
+
+  // Заменена кнопка "Сбросить" на "Обмен монет"
+  document.getElementById('exchangeBtn').addEventListener('click', () => {
+    performExchange();
+  });
+
+  // Обработчик для кнопки "Обмен монет"
+  function performExchange() {
+    const fromKey = fromSelect.value;
+    const toKey = toSelect.value;
+    const amountStr = document.getElementById('memeAmount').value;
+    const amount = parseFloat(amountStr);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Пожалуйста, введите корректное количество.');
+      return;
+    }
+    const rate = memeCoins[fromKey].rate[toKey];
+    if (!rate) {
+      alert('Курс для выбранной пары не найден.');
+      return;
+    }
+    const result = amount * rate;
+    outputSpan.textContent = `${result.toFixed(8)} ${memeCoins[toKey].name}`;
+    amountSentDiv.textContent = amount.toString();
+    amountReceivedDiv.textContent = result.toFixed(8);
+  }
+
+  // Обновляем сумму при вводе
+  document.querySelector('#exchangeForm').addEventListener('input', performExchange);
+
+  // --- Обработка MetaMask ---
+  let userAddress = null;
+  const connectBtn = document.getElementById('connectWalletBtn');
+  const walletStatus = document.getElementById('walletStatus');
+
+  async function checkAlreadyConnected() {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+          userAddress = accounts[0];
+          walletStatus.textContent = `Подключено: ${userAddress}`;
+        } else {
+          walletStatus.textContent = 'Кошелек не подключен';
+        }
+      } catch (err) {
+        console.error('Ошибка при проверке аккаунтов:', err);
+        walletStatus.textContent = 'Ошибка при проверке кошелька';
+      }
+    }
+  }
+
+  if (typeof window.ethereum !== 'undefined') {
+    checkAlreadyConnected();
+
+    connectBtn.addEventListener('click', async () => {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAddress = accounts[0];
+        walletStatus.textContent = `Подключено: ${userAddress}`;
+      } catch (err) {
+        console.error('Ошибка подключения:', err);
+        walletStatus.textContent = 'Ошибка подключения';
+      }
+    });
+
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) {
+        userAddress = null;
+        walletStatus.textContent = 'Кошелек отключен';
+      } else {
+        userAddress = accounts[0];
+        walletStatus.textContent = `Подключено: ${userAddress}`;
+      }
+    });
+  } else {
+    walletStatus.textContent = 'MetaMask не найден. Установите MetaMask.';
+    document.getElementById('connectWalletBtn').disabled = true;
+  }
+})();
+</script>
+
+</body>
+</html>
